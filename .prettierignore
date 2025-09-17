@@ -1,0 +1,7 @@
+README.md
+.eslintrc.js
+*.config.js
+*.config.ts
+dist/
+node_modules/
+tailwind.config.js
