@@ -1,7 +1,21 @@
 import { Target, TrendingUp, Users } from 'lucide-react'
-import { Tabs, TabsTrigger, TabsList } from '../components/ui/Tabs'
+import { Tabs, TabsTrigger, TabsList, TabsContent } from '../components/ui/Tabs'
+import { useLeads } from '../hooks/useLeads'
+import { useState } from 'react'
+import type { Lead } from '../types'
+import { LeadsList } from '../components/LeadsList'
 
 export default function MiniSellerConsole() {
+  const { leads, opportunities, loading } = useLeads()
+
+  const [selectedLead, setSelectedLead] = useState<Lead | null>(null)
+  const [isDetailPanelOpen, setIsDetailPanelOpen] = useState(false)
+
+  const handleLeadSelect = (lead: Lead) => {
+    setSelectedLead(lead)
+    setIsDetailPanelOpen(true)
+  }
+
   return (
     <div className="min-h-screen bg-gray-50">
       <header className="bg-white border-b border-gray-200">
@@ -23,15 +37,21 @@ export default function MiniSellerConsole() {
 
             <div className="hidden sm:flex items-center gap-6">
               <div className="text-center">
-                <div className="text-2xl font-bold text-gray-900">4</div>
+                <div className="text-2xl font-bold text-gray-900">
+                  {leads.length}
+                </div>
                 <div className="text-xs text-gray-600">Active Leads</div>
               </div>
               <div className="text-center">
-                <div className="text-2xl font-bold text-blue-600">9</div>
+                <div className="text-2xl font-bold text-blue-600">
+                  {opportunities.length}
+                </div>
                 <div className="text-xs text-gray-600">Opportunities</div>
               </div>
               <div className="text-center">
-                <div className="text-2xl font-bold text-green-600">2</div>
+                <div className="text-2xl font-bold text-green-600">
+                  {leads.filter((lead) => lead.status === 'qualified').length}
+                </div>
                 <div className="text-xs text-gray-600">Qualified</div>
               </div>
             </div>
@@ -44,16 +64,29 @@ export default function MiniSellerConsole() {
           <TabsList className="grid w-full grid-cols-2 lg:w-96">
             <TabsTrigger value="leads" className="flex items-center gap-2">
               <Users className="h-4 w-4" />
-              Leads (1)
+              Leads ({leads.length})
             </TabsTrigger>
             <TabsTrigger
               value="opportunities"
               className="flex items-center gap-2"
             >
               <Target className="h-4 w-4" />
-              Opportunities (0)
+              Opportunities ({opportunities.length})
             </TabsTrigger>
           </TabsList>
+
+          <TabsContent value="leads" className="space-y-6">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              <div className="lg:col-span-3">
+                <LeadsList
+                  leads={leads}
+                  onLeadSelect={handleLeadSelect}
+                  selectedLeadId={selectedLead?.id}
+                  loading={loading}
+                />
+              </div>
+            </div>
+          </TabsContent>
         </Tabs>
       </main>
     </div>
