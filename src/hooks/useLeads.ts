@@ -67,10 +67,10 @@ export function useLeads() {
       const opportunity: Opportunity = {
         id: `opp-${Date.now()}`,
         name: `${lead.company} - ${lead.name}`,
-        stage: (opportunityData?.stage as any) || "prospecting",
+        stage: (opportunityData?.stage as string) || 'prospecting',
         amount: opportunityData?.amount,
         accountName: lead.company,
-        createdAt: new Date(),
+        createdAt: new Date()
       }
 
       setOpportunities((prev) => [...prev, opportunity])
