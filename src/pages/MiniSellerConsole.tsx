@@ -1,4 +1,5 @@
-import { TrendingUp } from 'lucide-react'
+import { Target, TrendingUp, Users } from 'lucide-react'
+import { Tabs, TabsTrigger, TabsList } from '../components/ui/Tabs'
 
 export default function MiniSellerConsole() {
   return (
@@ -38,6 +39,23 @@ export default function MiniSellerConsole() {
         </div>
       </header>
 
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <Tabs defaultValue="leads" className="space-y-6">
+          <TabsList className="grid w-full grid-cols-2 lg:w-96">
+            <TabsTrigger value="leads" className="flex items-center gap-2">
+              <Users className="h-4 w-4" />
+              Leads (1)
+            </TabsTrigger>
+            <TabsTrigger
+              value="opportunities"
+              className="flex items-center gap-2"
+            >
+              <Target className="h-4 w-4" />
+              Opportunities (0)
+            </TabsTrigger>
+          </TabsList>
+        </Tabs>
+      </main>
     </div>
   )
 }
