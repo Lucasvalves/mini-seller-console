@@ -1,14 +1,13 @@
 import { useState, useMemo } from 'react'
 import type { Lead } from '../types'
-import { getScoreColor, getStatusColor } from '../utils/validation'
 import { Card } from './ui/Card'
 import { Button } from './ui/Buttton'
 import { Badge } from './ui/Badge'
 import { Input } from './ui/Input'
 import CustomSelect from './ui/CustomSelect'
-
 import { Search, ArrowUpDown, Filter, X } from 'lucide-react'
-
+import { useLocalStorage } from '../hooks/useLocalStorage'
+import { getScoreColor, getStatusColor } from '../utils/validation'
 interface LeadsListProps {
   leads: Lead[]
   onLeadSelect: (lead: Lead) => void
@@ -30,7 +29,7 @@ export function LeadsList({
   selectedLeadId,
   loading
 }: LeadsListProps) {
-  const [filters, setFilters] = useState<FilterState>({
+  const [filters, setFilters] = useLocalStorage<FilterState>('leads-filters', {
     searchTerm: '',
     statusFilter: 'all',
     sortOrder: 'desc',
