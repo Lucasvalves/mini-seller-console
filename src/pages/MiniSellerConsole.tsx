@@ -9,6 +9,8 @@ import { ConvertLeadDialog } from '../components/ConvertLeadDialog'
 import { OpportunitiesList } from '../components/OpportunitiesList'
 import { ErrorBoundary } from '../components/ErrorBoundary'
 import { ErrorState } from '../components/ErrorState'
+import { ToastContainer } from '../components/Toast'
+import { useToast } from '../hooks/useToast'
 
 export default function MiniSellerConsole() {
   const {
@@ -20,6 +22,7 @@ export default function MiniSellerConsole() {
     error,
     retryLoadLeads
   } = useLeads()
+  const { toasts, removeToast, success, error: showError } = useToast()
 
   const [selectedLead, setSelectedLead] = useState<Lead | null>(null)
   const [isDetailPanelOpen, setIsDetailPanelOpen] = useState(false)
@@ -29,6 +32,22 @@ export default function MiniSellerConsole() {
   const handleLeadSelect = (lead: Lead) => {
     setSelectedLead(lead)
     setIsDetailPanelOpen(true)
+  }
+
+  const handleUpdateLead = async (leadId: string, updates: Partial<Lead>) => {
+    const result = await updateLead(leadId, updates)
+
+    if (result.success) {
+      success('Lead updated', 'Lead information has been successfully updated')
+      // Update selected lead if it's the one being updated
+      if (selectedLead?.id === leadId) {
+        setSelectedLead((prev) => (prev ? { ...prev, ...updates } : null))
+      }
+    } else {
+      showError('Update failed', result.error)
+    }
+
+    return result
   }
 
   const handleConvertLead = (lead: Lead) => {
@@ -41,7 +60,17 @@ export default function MiniSellerConsole() {
     lead: Lead,
     opportunityData: { stage: string; amount?: number }
   ) => {
-    await convertToOpportunity(lead, opportunityData)
+    const result = await convertToOpportunity(lead, opportunityData)
+
+    if (result.success) {
+      success(
+        'Lead converted',
+        `${lead.name} has been converted to an opportunity`
+      )
+      setSelectedLead(null)
+    } else {
+      showError('Conversion failed', result.error)
+    }
 
     setIsConvertDialogOpen(false)
     setLeadToConvert(null)
@@ -147,7 +176,7 @@ export default function MiniSellerConsole() {
             setIsDetailPanelOpen(false)
             setSelectedLead(null)
           }}
-          onUpdate={updateLead}
+          onUpdate={handleUpdateLead}
           onConvert={handleConvertLead}
         />
         <ConvertLeadDialog
@@ -159,6 +188,7 @@ export default function MiniSellerConsole() {
           }}
           onConfirm={handleConfirmConvert}
         />
+        <ToastContainer toasts={toasts} onClose={removeToast} />
       </div>
     </ErrorBoundary>
   )

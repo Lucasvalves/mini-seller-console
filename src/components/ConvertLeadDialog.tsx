@@ -54,7 +54,7 @@ export function ConvertLeadDialog({
 
       setStage('prospecting')
       setAmount('')
-    } catch (err) {
+    } catch{
       setError('Failed to convert lead to opportunity')
     } finally {
       setIsConverting(false)

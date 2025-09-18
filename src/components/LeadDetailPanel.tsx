@@ -82,7 +82,7 @@ export function LeadDetailPanel({
       } else {
         setErrors({ status: result.error || 'Failed to update lead' })
       }
-    } catch (error) {
+    } catch{
       setErrors({ status: 'An unexpected error occurred' })
     } finally {
       setSaving(false)
