@@ -37,6 +37,39 @@ export function ConvertLeadDialog({
 
   if (!lead || !isOpen) return null
 
+  const handleConfirm = async () => {
+    setIsConverting(true)
+    setError(null)
+
+    try {
+      const opportunityData = {
+        stage,
+        amount: amount
+          ? Number.parseFloat(amount.replace(/[^\d.,]/g, '').replace(',', '.'))
+          : undefined
+      }
+
+      await onConfirm(lead, opportunityData)
+      onClose()
+
+      setStage('prospecting')
+      setAmount('')
+    } catch (err) {
+      setError('Failed to convert lead to opportunity')
+    } finally {
+      setIsConverting(false)
+    }
+  }
+
+  const handleClose = () => {
+    if (!isConverting) {
+      onClose()
+      setStage('prospecting')
+      setAmount('')
+      setError(null)
+    }
+  }
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
       {/* Backdrop */}
@@ -110,12 +143,17 @@ export function ConvertLeadDialog({
         <div className="flex gap-2 pt-4">
           <Button
             variant="outline"
+            onClick={handleClose}
             disabled={isConverting}
             className="flex-1 bg-transparent"
           >
             Cancel
           </Button>
-          <Button className="flex-1">
+          <Button
+            onClick={handleConfirm}
+            disabled={isConverting}
+            className="flex-1"
+          >
             {isConverting ? (
               <>
                 <LoadingSpinner size="sm" />
