@@ -7,4 +7,20 @@ export interface Lead {
   score: number
   status: 'new' | 'contacted' | 'qualified' | 'unqualified'
 }
+export interface Opportunity {
+  id: string
+  name: string
+  stage:
+    | 'prospecting'
+    | 'qualification'
+    | 'proposal'
+    | 'negotiation'
+    | 'closed-won'
+    | 'closed-lost'
+  amount?: number
+  accountName: string
+  createdAt: Date
+}
+
 export type LeadStatus = Lead['status']
+export type OpportunityStage = Opportunity['stage']
