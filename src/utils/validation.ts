@@ -1,3 +1,8 @@
+export function isValidEmail(email: string): boolean {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+  return emailRegex.test(email)
+}
+
 export function getScoreColor(score: number): string {
   if (score >= 90) return 'text-green-600 bg-green-50'
   if (score >= 75) return 'text-blue-600 bg-blue-50'

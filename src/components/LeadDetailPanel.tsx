@@ -16,7 +16,11 @@ import {
   Save
 } from 'lucide-react'
 import CustomSelect from './ui/CustomSelect'
-import { getScoreColor, getStatusColor } from '../utils/validation'
+import {
+  getScoreColor,
+  getStatusColor,
+  isValidEmail
+} from '../utils/validation'
 interface LeadDetailPanelProps {
   lead: Lead | null
   isOpen: boolean
@@ -43,6 +47,7 @@ export function LeadDetailPanel({
   const [editedLead, setEditedLead] = useState<Lead | null>(null)
   const [isEditing, setIsEditing] = useState(false)
   const [isSaving, setSaving] = useState(false)
+  const [errors, setErrors] = useState<{ email?: string; status?: string }>({})
 
   useEffect(() => {
     if (lead) {
@@ -55,6 +60,10 @@ export function LeadDetailPanel({
 
   const handleSave = async () => {
     // Validate email
+    if (!isValidEmail(editedLead.email)) {
+      setErrors({ email: 'Please enter a valid email address' })
+      return
+    }
 
     setSaving(true)
 
@@ -66,9 +75,11 @@ export function LeadDetailPanel({
 
       if (result.success) {
         setIsEditing(false)
+      } else {
+        setErrors({ status: result.error || 'Failed to update lead' })
       }
     } catch (error) {
-      console.log({ status: 'An unexpected error occurred' })
+      setErrors({ status: 'An unexpected error occurred' })
     } finally {
       setSaving(false)
     }
@@ -150,8 +161,14 @@ export function LeadDetailPanel({
                           })
                         }
                         disabled={!isEditing}
+                        className={errors.email ? 'border-red-500' : ''}
                       />
                     </div>
+                    {errors.email && (
+                      <p className="text-sm text-red-600 mt-1">
+                        {errors.email}
+                      </p>
+                    )}
                   </div>
 
                   <div>
@@ -206,6 +223,13 @@ export function LeadDetailPanel({
                 </div>
               </div>
             </Card>
+
+            {/* Error Message */}
+            {errors.status && (
+              <div className="p-3 bg-red-50 border border-red-200 rounded-md">
+                <p className="text-sm text-red-600">{errors.status}</p>
+              </div>
+            )}
 
             {/* Action Buttons */}
             <div className="flex flex-col gap-3 pt-4 border-t">
