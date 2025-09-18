@@ -7,7 +7,7 @@ import { LeadsList } from '../components/LeadsList'
 import { LeadDetailPanel } from '../components/LeadDetailPanel'
 
 export default function MiniSellerConsole() {
-  const { leads, opportunities, loading } = useLeads()
+  const { leads, opportunities, loading, updateLead } = useLeads()
 
   const [selectedLead, setSelectedLead] = useState<Lead | null>(null)
   const [isDetailPanelOpen, setIsDetailPanelOpen] = useState(false)
@@ -98,6 +98,7 @@ export default function MiniSellerConsole() {
           setIsDetailPanelOpen(false)
           setSelectedLead(null)
         }}
+        onUpdate={updateLead}
       />
     </div>
   )

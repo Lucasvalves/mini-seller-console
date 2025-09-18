@@ -1,20 +1,30 @@
 import { useState, useEffect } from 'react'
-
 import type { Lead, LeadStatus } from '../types'
 import { Card } from './ui/Card'
 import { Button } from './ui/Buttton'
 import { Badge } from './ui/Badge'
 import { Input } from './ui/Input'
 import { Label } from './ui/Label'
-
-import { X, RotateCcw, User, Building, Mail, Globe, Target } from 'lucide-react'
+import {
+  X,
+  RotateCcw,
+  User,
+  Building,
+  Mail,
+  Globe,
+  Target,
+  Save
+} from 'lucide-react'
 import CustomSelect from './ui/CustomSelect'
 import { getScoreColor, getStatusColor } from '../utils/validation'
-
 interface LeadDetailPanelProps {
   lead: Lead | null
   isOpen: boolean
   onClose: () => void
+  onUpdate: (
+    leadId: string,
+    updates: Partial<Lead>
+  ) => Promise<{ success: boolean; error?: string }>
 }
 
 const statusOptions = [
@@ -27,10 +37,12 @@ const statusOptions = [
 export function LeadDetailPanel({
   lead,
   isOpen,
-  onClose
+  onClose,
+  onUpdate
 }: LeadDetailPanelProps) {
   const [editedLead, setEditedLead] = useState<Lead | null>(null)
   const [isEditing, setIsEditing] = useState(false)
+  const [isSaving, setSaving] = useState(false)
 
   useEffect(() => {
     if (lead) {
@@ -41,9 +53,34 @@ export function LeadDetailPanel({
 
   if (!lead || !editedLead || !isOpen) return null
 
+  const handleSave = async () => {
+    // Validate email
+
+    setSaving(true)
+
+    try {
+      const result = await onUpdate(lead.id, {
+        email: editedLead.email,
+        status: editedLead.status
+      })
+
+      if (result.success) {
+        setIsEditing(false)
+      }
+    } catch (error) {
+      console.log({ status: 'An unexpected error occurred' })
+    } finally {
+      setSaving(false)
+    }
+  }
+
+  const handleCancel = () => {
+    setEditedLead({ ...lead })
+    setIsEditing(false)
+  }
+
   return (
     <div className="fixed inset-0 z-50">
-      {/* Backdrop */}
       <div className="fixed inset-0 bg-black/50" onClick={onClose} />
 
       {/* Panel */}
@@ -172,16 +209,45 @@ export function LeadDetailPanel({
 
             {/* Action Buttons */}
             <div className="flex flex-col gap-3 pt-4 border-t">
-              <Button variant="outline">
-                <RotateCcw className="h-4 w-4 mr-2" />
-                Cancel
-              </Button>
-              <div className="space-y-2">
-                <Button variant="outline" className="w-full">
-                  Edit Lead
-                </Button>
-                <Button className="w-full">Convert to Opportunity</Button>
-              </div>
+              {isEditing ? (
+                <div className="flex gap-2">
+                  <Button
+                    onClick={handleSave}
+                    disabled={isSaving}
+                    className="flex-1"
+                  >
+                    {isSaving ? (
+                      <>
+                        <span className="ml-2">Saving...</span>
+                      </>
+                    ) : (
+                      <>
+                        <Save className="h-4 w-4 mr-2" />
+                        Save Changes
+                      </>
+                    )}
+                  </Button>
+                  <Button
+                    variant="outline"
+                    onClick={handleCancel}
+                    disabled={isSaving}
+                  >
+                    <RotateCcw className="h-4 w-4 mr-2" />
+                    Cancel
+                  </Button>
+                </div>
+              ) : (
+                <div className="space-y-2">
+                  <Button
+                    onClick={() => setIsEditing(true)}
+                    variant="outline"
+                    className="w-full"
+                  >
+                    Edit Lead
+                  </Button>
+                  <Button className="w-full">Convert to Opportunity</Button>
+                </div>
+              )}
             </div>
           </div>
         </div>
