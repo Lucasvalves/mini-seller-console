@@ -1,6 +1,6 @@
 
 import type { ReactNode } from 'react'
-import { useTabs } from "./Tabs"
+import { useTabs } from './TabsContext'
 
 interface TabsContentProps {
   value: string
