@@ -5,9 +5,11 @@ import { useState } from 'react'
 import type { Lead } from '../types'
 import { LeadsList } from '../components/LeadsList'
 import { LeadDetailPanel } from '../components/LeadDetailPanel'
+import { ConvertLeadDialog } from '../components/ConvertLeadDialog'
 
 export default function MiniSellerConsole() {
-  const { leads, opportunities, loading, updateLead } = useLeads()
+  const { leads, opportunities, loading, updateLead, convertToOpportunity } =
+    useLeads()
 
   const [selectedLead, setSelectedLead] = useState<Lead | null>(null)
   const [isDetailPanelOpen, setIsDetailPanelOpen] = useState(false)
@@ -23,6 +25,16 @@ export default function MiniSellerConsole() {
     setLeadToConvert(lead)
     setIsConvertDialogOpen(true)
     setIsDetailPanelOpen(false)
+  }
+
+  const handleConfirmConvert = async (
+    lead: Lead,
+    opportunityData: { stage: string; amount?: number }
+  ) => {
+    await convertToOpportunity(lead, opportunityData)
+
+    setIsConvertDialogOpen(false)
+    setLeadToConvert(null)
   }
 
   return (
@@ -108,6 +120,15 @@ export default function MiniSellerConsole() {
         }}
         onUpdate={updateLead}
         onConvert={handleConvertLead}
+      />
+      <ConvertLeadDialog
+        lead={leadToConvert}
+        isOpen={isConvertDialogOpen}
+        onClose={() => {
+          setIsConvertDialogOpen(false)
+          setLeadToConvert(null)
+        }}
+        onConfirm={handleConfirmConvert}
       />
     </div>
   )
