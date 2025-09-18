@@ -11,10 +11,18 @@ export default function MiniSellerConsole() {
 
   const [selectedLead, setSelectedLead] = useState<Lead | null>(null)
   const [isDetailPanelOpen, setIsDetailPanelOpen] = useState(false)
+  const [isConvertDialogOpen, setIsConvertDialogOpen] = useState(false)
+  const [leadToConvert, setLeadToConvert] = useState<Lead | null>(null)
 
   const handleLeadSelect = (lead: Lead) => {
     setSelectedLead(lead)
     setIsDetailPanelOpen(true)
+  }
+
+  const handleConvertLead = (lead: Lead) => {
+    setLeadToConvert(lead)
+    setIsConvertDialogOpen(true)
+    setIsDetailPanelOpen(false)
   }
 
   return (
@@ -99,6 +107,7 @@ export default function MiniSellerConsole() {
           setSelectedLead(null)
         }}
         onUpdate={updateLead}
+        onConvert={handleConvertLead}
       />
     </div>
   )

@@ -29,6 +29,7 @@ interface LeadDetailPanelProps {
     leadId: string,
     updates: Partial<Lead>
   ) => Promise<{ success: boolean; error?: string }>
+  onConvert: (lead: Lead) => void
 }
 
 const statusOptions = [
@@ -42,7 +43,8 @@ export function LeadDetailPanel({
   lead,
   isOpen,
   onClose,
-  onUpdate
+  onUpdate,
+  onConvert
 }: LeadDetailPanelProps) {
   const [editedLead, setEditedLead] = useState<Lead | null>(null)
   const [isEditing, setIsEditing] = useState(false)
@@ -91,6 +93,11 @@ export function LeadDetailPanel({
     setEditedLead({ ...lead })
     setIsEditing(false)
     setErrors({})
+  }
+
+  const handleConvert = () => {
+    onConvert(lead)
+    onClose()
   }
 
   return (
@@ -272,7 +279,9 @@ export function LeadDetailPanel({
                   >
                     Edit Lead
                   </Button>
-                  <Button className="w-full">Convert to Opportunity</Button>
+                  <Button onClick={handleConvert} className="w-full">
+                    Convert to Opportunity
+                  </Button>
                 </div>
               )}
             </div>
