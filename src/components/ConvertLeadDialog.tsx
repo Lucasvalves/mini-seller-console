@@ -101,6 +101,12 @@ export function ConvertLeadDialog({
           </div>
         </div>
 
+        {error && (
+          <div className="p-3 bg-red-50 border border-red-200 rounded-md">
+            <p className="text-sm text-red-600">{error}</p>
+          </div>
+        )}
+
         <div className="flex gap-2 pt-4">
           <Button
             variant="outline"
