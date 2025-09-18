@@ -1,7 +1,8 @@
 import type { Opportunity } from '../types'
 import { Card } from './ui/Card'
 import { Badge } from './ui/Badge'
-import { Building, Calendar, DollarSign } from 'lucide-react'
+import { Building, Calendar, DollarSign, TrendingUp } from 'lucide-react'
+import { EmptyState } from './EmptyState'
 
 interface OpportunitiesListProps {
   opportunities: Opportunity[]
@@ -43,6 +44,18 @@ function formatDate(date: Date): string {
 }
 
 export function OpportunitiesList({ opportunities }: OpportunitiesListProps) {
+  if (opportunities.length === 0) {
+    return (
+      <Card className="p-6">
+        <EmptyState
+          title="No opportunities yet"
+          description="Convert leads to opportunities to see them here"
+          icon={<TrendingUp className="h-12 w-12" />}
+        />
+      </Card>
+    )
+  }
+
   return (
     <Card>
       <div className="p-4 border-b">
