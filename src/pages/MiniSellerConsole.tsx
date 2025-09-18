@@ -4,6 +4,7 @@ import { useLeads } from '../hooks/useLeads'
 import { useState } from 'react'
 import type { Lead } from '../types'
 import { LeadsList } from '../components/LeadsList'
+import { LeadDetailPanel } from '../components/LeadDetailPanel'
 
 export default function MiniSellerConsole() {
   const { leads, opportunities, loading } = useLeads()
@@ -89,6 +90,15 @@ export default function MiniSellerConsole() {
           </TabsContent>
         </Tabs>
       </main>
+
+      <LeadDetailPanel
+        lead={selectedLead}
+        isOpen={isDetailPanelOpen}
+        onClose={() => {
+          setIsDetailPanelOpen(false)
+          setSelectedLead(null)
+        }}
+      />
     </div>
   )
 }

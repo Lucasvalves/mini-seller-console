@@ -1,10 +1,10 @@
 export interface Lead {
-    id: string
-    name: string
-    company: string
-    email: string
-    source: string
-    score: number
-    status: "new" | "contacted" | "qualified" | "unqualified"
-  }
-  
+  id: string
+  name: string
+  company: string
+  email: string
+  source: string
+  score: number
+  status: 'new' | 'contacted' | 'qualified' | 'unqualified'
+}
+export type LeadStatus = Lead['status']

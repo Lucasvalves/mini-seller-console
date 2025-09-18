@@ -1,0 +1,191 @@
+import { useState, useEffect } from 'react'
+
+import type { Lead, LeadStatus } from '../types'
+import { Card } from './ui/Card'
+import { Button } from './ui/Buttton'
+import { Badge } from './ui/Badge'
+import { Input } from './ui/Input'
+import { Label } from './ui/Label'
+
+import { X, RotateCcw, User, Building, Mail, Globe, Target } from 'lucide-react'
+import CustomSelect from './ui/CustomSelect'
+import { getScoreColor, getStatusColor } from '../utils/validation'
+
+interface LeadDetailPanelProps {
+  lead: Lead | null
+  isOpen: boolean
+  onClose: () => void
+}
+
+const statusOptions = [
+  { value: 'new' as LeadStatus, label: 'New' },
+  { value: 'contacted' as LeadStatus, label: 'Contacted' },
+  { value: 'qualified' as LeadStatus, label: 'Qualified' },
+  { value: 'unqualified' as LeadStatus, label: 'Unqualified' }
+]
+
+export function LeadDetailPanel({
+  lead,
+  isOpen,
+  onClose
+}: LeadDetailPanelProps) {
+  const [editedLead, setEditedLead] = useState<Lead | null>(null)
+  const [isEditing, setIsEditing] = useState(false)
+
+  useEffect(() => {
+    if (lead) {
+      setEditedLead({ ...lead })
+      setIsEditing(false)
+    }
+  }, [lead])
+
+  if (!lead || !editedLead || !isOpen) return null
+
+  return (
+    <div className="fixed inset-0 z-50">
+      {/* Backdrop */}
+      <div className="fixed inset-0 bg-black/50" onClick={onClose} />
+
+      {/* Panel */}
+      <div className="fixed right-0 top-0 h-full w-full max-w-lg bg-white shadow-xl overflow-y-auto">
+        <div className="p-6">
+          {/* Header */}
+          <div className="space-y-2 pb-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <h2 className="text-xl font-semibold">{lead.name}</h2>
+                <p className="text-sm text-gray-600">{lead.company}</p>
+              </div>
+              <Button variant="ghost" size="sm" onClick={onClose}>
+                <X className="h-4 w-4" />
+              </Button>
+            </div>
+          </div>
+
+          <div className="space-y-6">
+            {/* Lead Information */}
+            <Card className="p-4">
+              <div className="space-y-4">
+                <div className="flex items-center gap-2">
+                  <User className="h-4 w-4 text-gray-500" />
+                  <Label className="text-sm font-medium">
+                    Contact Information
+                  </Label>
+                </div>
+
+                <div className="grid grid-cols-1 gap-4">
+                  <div>
+                    <Label htmlFor="name" className="text-sm text-gray-600">
+                      Name
+                    </Label>
+                    <Input
+                      id="name"
+                      value={lead.name}
+                      disabled
+                      className="mt-1"
+                    />
+                  </div>
+
+                  <div>
+                    <Label htmlFor="company" className="text-sm text-gray-600">
+                      Company
+                    </Label>
+                    <div className="flex items-center gap-2 mt-1">
+                      <Building className="h-4 w-4 text-gray-400" />
+                      <Input id="company" value={lead.company} disabled />
+                    </div>
+                  </div>
+
+                  <div>
+                    <Label htmlFor="email" className="text-sm text-gray-600">
+                      Email
+                    </Label>
+                    <div className="flex items-center gap-2 mt-1">
+                      <Mail className="h-4 w-4 text-gray-400" />
+                      <Input
+                        id="email"
+                        type="email"
+                        value={editedLead.email}
+                        onChange={(e) =>
+                          setEditedLead({
+                            ...editedLead,
+                            email: e.target.value
+                          })
+                        }
+                        disabled={!isEditing}
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <Label htmlFor="status" className="text-sm text-gray-600">
+                      Status
+                    </Label>
+                    <div className="mt-1">
+                      {isEditing ? (
+                        <CustomSelect
+                          value={editedLead.status}
+                          onValueChange={(value: LeadStatus) =>
+                            setEditedLead({ ...editedLead, status: value })
+                          }
+                          options={statusOptions}
+                        />
+                      ) : (
+                        <Badge className={getStatusColor(lead.status)}>
+                          {lead.status}
+                        </Badge>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </Card>
+
+            {/* Lead Metrics */}
+            <Card className="p-4">
+              <div className="space-y-4">
+                <div className="flex items-center gap-2">
+                  <Target className="h-4 w-4 text-gray-500" />
+                  <Label className="text-sm font-medium">Lead Metrics</Label>
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <Label className="text-sm text-gray-600">Source</Label>
+                    <div className="flex items-center gap-2 mt-1">
+                      <Globe className="h-4 w-4 text-gray-400" />
+                      <span className="text-sm">{lead.source}</span>
+                    </div>
+                  </div>
+
+                  <div>
+                    <Label className="text-sm text-gray-600">Score</Label>
+                    <div
+                      className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium mt-1 ${getScoreColor(lead.score)}`}
+                    >
+                      {lead.score}/100
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </Card>
+
+            {/* Action Buttons */}
+            <div className="flex flex-col gap-3 pt-4 border-t">
+              <Button variant="outline">
+                <RotateCcw className="h-4 w-4 mr-2" />
+                Cancel
+              </Button>
+              <div className="space-y-2">
+                <Button variant="outline" className="w-full">
+                  Edit Lead
+                </Button>
+                <Button className="w-full">Convert to Opportunity</Button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
