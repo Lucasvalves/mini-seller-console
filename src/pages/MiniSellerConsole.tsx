@@ -6,6 +6,7 @@ import type { Lead } from '../types'
 import { LeadsList } from '../components/LeadsList'
 import { LeadDetailPanel } from '../components/LeadDetailPanel'
 import { ConvertLeadDialog } from '../components/ConvertLeadDialog'
+import { OpportunitiesList } from '../components/OpportunitiesList'
 
 export default function MiniSellerConsole() {
   const { leads, opportunities, loading, updateLead, convertToOpportunity } =
@@ -107,6 +108,9 @@ export default function MiniSellerConsole() {
                 />
               </div>
             </div>
+          </TabsContent>
+          <TabsContent value="opportunities" className="space-y-6">
+            <OpportunitiesList opportunities={opportunities} />
           </TabsContent>
         </Tabs>
       </main>
