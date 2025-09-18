@@ -53,6 +53,7 @@ export function LeadDetailPanel({
     if (lead) {
       setEditedLead({ ...lead })
       setIsEditing(false)
+      setErrors({})
     }
   }, [lead])
 
@@ -66,6 +67,7 @@ export function LeadDetailPanel({
     }
 
     setSaving(true)
+    setErrors({})
 
     try {
       const result = await onUpdate(lead.id, {
@@ -88,6 +90,7 @@ export function LeadDetailPanel({
   const handleCancel = () => {
     setEditedLead({ ...lead })
     setIsEditing(false)
+    setErrors({})
   }
 
   return (
