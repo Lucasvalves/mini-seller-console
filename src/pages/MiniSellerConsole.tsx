@@ -8,10 +8,18 @@ import { LeadDetailPanel } from '../components/LeadDetailPanel'
 import { ConvertLeadDialog } from '../components/ConvertLeadDialog'
 import { OpportunitiesList } from '../components/OpportunitiesList'
 import { ErrorBoundary } from '../components/ErrorBoundary'
+import { ErrorState } from '../components/ErrorState'
 
 export default function MiniSellerConsole() {
-  const { leads, opportunities, loading, updateLead, convertToOpportunity } =
-    useLeads()
+  const {
+    leads,
+    opportunities,
+    loading,
+    updateLead,
+    convertToOpportunity,
+    error,
+    retryLoadLeads
+  } = useLeads()
 
   const [selectedLead, setSelectedLead] = useState<Lead | null>(null)
   const [isDetailPanelOpen, setIsDetailPanelOpen] = useState(false)
@@ -39,6 +47,21 @@ export default function MiniSellerConsole() {
     setLeadToConvert(null)
   }
 
+  // Show error state if there's an error loading leads
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gray-50 p-4">
+        <div className="max-w-4xl mx-auto">
+          <ErrorState
+            title="Failed to load leads"
+            description={error}
+            onRetry={retryLoadLeads}
+            type="network"
+          />
+        </div>
+      </div>
+    )
+  }
   return (
     <ErrorBoundary>
       <div className="min-h-screen bg-gray-50">
